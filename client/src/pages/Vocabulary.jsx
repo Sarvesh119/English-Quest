@@ -18,7 +18,7 @@ const Vocabulary = () => {
 
   const fetchWords = async () => {
     try {
-      const { data } = await axios.get('http://localhost:5000/api/vocabulary');
+      const { data } = await axios.get('https://english-quest-kf0e.onrender.com/api/vocabulary');
       setWords(data);
       setLoading(false);
     } catch (error) {

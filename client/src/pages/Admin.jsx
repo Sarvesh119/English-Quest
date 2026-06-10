@@ -25,7 +25,7 @@ const Admin = () => {
       const config = {
         headers: { Authorization: `Bearer ${user.token}` }
       };
-      await axios.post('http://localhost:5000/api/vocabulary', newWord, config);
+      await axios.post('https://english-quest-kf0e.onrender.com/api/vocabulary', newWord, config);
       toast.success('Word added successfully!');
       setNewWord({
         word: '',

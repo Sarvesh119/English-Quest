@@ -25,7 +25,7 @@ const Quiz = () => {
   const startNewQuiz = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.get('http://localhost:5000/api/vocabulary/random?count=10');
+      const { data } = await axios.get('https://english-quest-kf0e.onrender.com/api/vocabulary/random?count=10');
       
       // Transform vocabulary into questions
       const formattedQuestions = data.map(word => {

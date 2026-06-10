@@ -6,6 +6,7 @@ import { Search, Filter, Volume2, ChevronRight, Loader2 } from 'lucide-react';
 const Vocabulary = () => {
   const [words, setWords] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedDifficulty, setSelectedDifficulty] = useState('All');
@@ -17,6 +18,8 @@ const Vocabulary = () => {
   }, []);
 
   const fetchVocabulary = async () => {
+    setLoading(true);
+    setError(null);
     try {
       const API_URL = import.meta.env.VITE_API_URL || 'https://english-quest-kf0e.onrender.com/api';
       const { data } = await axios.get(`${API_URL}/vocabulary`);
@@ -24,6 +27,7 @@ const Vocabulary = () => {
       setLoading(false);
     } catch (error) {
       console.error('Error fetching words:', error);
+      setError('Failed to load vocabulary. Please check your internet or if the backend is down.');
       setLoading(false);
     }
   };

@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #58cc02; /* Duolingo Green */
+  --secondary-color: #1cb0f6; /* Duolingo Blue */
+  --accent-color: #ffc800; /* Duolingo Yellow */
+  --error-color: #ff4b4b; /* Duolingo Red */
+}
+
+body {
+  @apply bg-gray-50 text-gray-900 font-sans;
+}
+
+.btn-primary {
+  @apply bg-primary-500 hover:bg-primary-600 text-white font-bold py-2 px-4 rounded-xl border-b-4 border-primary-700 active:border-b-0 active:translate-y-1 transition-all;
+}
+
+.btn-secondary {
+  @apply bg-white hover:bg-gray-100 text-gray-700 font-bold py-2 px-4 rounded-xl border-2 border-gray-200 active:translate-y-1 transition-all;
+}
+
+.card {
+  @apply bg-white p-6 rounded-2xl border-2 border-gray-200 shadow-sm hover:shadow-md transition-shadow;
+}

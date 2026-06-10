@@ -1,0 +1,500 @@
+﻿Algorithm
+Blockchain
+Cybersecurity
+Encryption
+Latency
+Scalability
+Refactoring
+Middleware
+Metadata
+Virtualization
+Containerization
+Microservices
+Asynchronous
+Deployment
+Automation
+Heuristic
+Interoperability
+Syntax
+Iteration
+Recursion
+Debugging
+Framework
+Dependency
+Orchestration
+Firewall
+Load Balancer
+Cache
+Indexing
+Sharding
+Replication
+Concurrency
+Parallelism
+Multi-threading
+Deadlock
+Race Condition
+Hashing
+Bandwidth
+Throughput
+Immutable
+Mutable
+Abstraction
+Encapsulation
+Polymorphism
+Inheritance
+Provisioning
+Telemetry
+Sandbox
+Honeypot
+Endpoint
+Repository
+Payload
+Daemon
+Semantic
+Token
+Registry
+Bite the bullet
+Break a leg
+Call it a day
+Cut to the chase
+Spill the beans
+Piece of cake
+Under the weather
+Hit the nail on the head
+Barking up the wrong tree
+Once in a blue moon
+Bite off more than you can chew
+Blessing in disguise
+Burn the midnight oil
+Cry over spilled milk
+Every cloud has a silver lining
+Jump on the bandwagon
+Keep your chin up
+Method to the madness
+Not my cup of tea
+Off the hook
+On the ball
+Out of the blue
+Put all your eggs in one basket
+Steal someone's thunder
+Through thick and thin
+Under the table
+Weather the storm
+Wrap your head around something
+Add fuel to the fire
+All ears
+Back to the drawing board
+Ball is in your court
+Best of both worlds
+Burn bridges
+By the skin of one's teeth
+Costs an arm and a leg
+Cut corners
+Devil's advocate
+Elvis has left the building
+Far cry from
+Give someone the cold shoulder
+Go the extra mile
+Haste makes waste
+Have a blast
+Hit the books
+Hit the hay
+Ignorance is bliss
+It's not rocket science
+Jump the gun
+Kill two birds with one stone
+Last straw
+Let sleeping dogs lie
+Miss the boat
+No pain no gain
+On cloud nine
+Abstract
+Bibliography
+Empirical
+Hypothesis
+Methodology
+Paradigm
+Plagiarism
+Qualitative
+Quantitative
+Synthesize
+Validity
+Variable
+Acknowledgment
+Acquisition
+Adherence
+Advocacy
+Ambiguity
+Analytical
+Assertion
+Attribution
+Autonomy
+Classification
+Cognitive
+Compendium
+Conceptualize
+Constituent
+Contextualize
+Correlation
+Criterion
+Deduction
+Deficit
+Delineate
+Discourse
+Discrepancy
+Disseminate
+Divergent
+Doctrine
+Elucidate
+Epistemology
+Evaluation
+Evidence
+Explicit
+Extrapolate
+Fallacy
+Feasibility
+Generalization
+Homogeneous
+Heterogeneous
+Implementation
+Implication
+Incentive
+Induction
+Inherent
+Integration
+Interpolation
+Abridge
+Abscond
+Acumen
+Adroit
+Adulterate
+Amalgamate
+Ambivalent
+Ameliorate
+Anachronism
+Antipathy
+Assuage
+Audacity
+Augment
+Austere
+Banal
+Belie
+Benign
+Bombastic
+Boorish
+Burgeon
+Burnish
+Buttress
+Castigate
+Caustic
+Chicanery
+Coalesce
+Coda
+Cogent
+Commensurate
+Compendium
+Complaisant
+Compliant
+Conciliatory
+Condone
+Confound
+Connoisseur
+Contention
+Contentious
+Contrite
+Conundrum
+Convoluted
+Craven
+Daunt
+Decorum
+Default
+Delineate
+Demur
+Deride
+Desiccate
+Desultory
+Diatribe
+Dichotomy
+Diffident
+Diffuse
+Digression
+Accumulate
+Adequate
+Adverse
+Aesthetic
+Aggregate
+Allocate
+Alternative
+Analyze
+Anticipate
+Apparent
+Arbitrary
+Aspect
+Attribute
+Authority
+Benevolent
+Brief
+Capable
+Category
+Cease
+Challenge
+Chronological
+Circumstance
+Cite
+Clarify
+Coherent
+Collaborate
+Component
+Comprehensive
+Concentrate
+Concept
+Conclude
+Conduct
+Confirm
+Consequence
+Considerable
+Consist
+Constant
+Constituent
+Consume
+Contradict
+Contrast
+Contribute
+Controversial
+Convene
+Conventional
+Convey
+Corporate
+Correspond
+Criteria
+Crucial
+Currency
+Data
+Debate
+Decade
+Dedication
+Deficiency
+Accelerate
+Accurate
+Achieve
+Acknowledge
+Acquire
+Adapt
+Additional
+Adjust
+Administer
+Adopt
+Advantage
+Advise
+Affect
+Afford
+Alter
+Annual
+Appreciate
+Approach
+Appropriate
+Approve
+Approximate
+Area
+Argue
+Assess
+Assign
+Assist
+Assume
+Assure
+Attach
+Attain
+Attempt
+Attend
+Attitude
+Attract
+Authority
+Available
+Average
+Avoid
+Aware
+Base
+Basic
+Basis
+Bear
+Beat
+Behave
+Behavior
+Belief
+Believe
+Bend
+Benefit
+Better
+Beyond
+Bill
+Billion
+Bit
+Block
+Accomplishment
+Accountability
+Action-oriented
+Adaptability
+Alignment
+Aspiration
+Assertive
+Auspicious
+Autodidact
+Backlog
+Benchmarking
+Bottom-line
+Candidate
+Capability
+Collaborative
+Competency
+Compliance
+Conceptual
+Conflict-resolution
+Contribution
+Convey
+Corporate-culture
+Cross-functional
+Customer-centric
+Deadline-driven
+Decision-making
+Delegation
+Deliverable
+Diligent
+Disruption
+Drive
+Efficiency
+Emotional-intelligence
+Empowerment
+Engagement
+Enterprising
+Excellence
+Execution
+Expertise
+Facilitate
+Growth-mindset
+Incentive
+Influential
+Initiative
+Innovation
+Insightful
+Interpersonal
+Intrapreneur
+Leader
+Leadership
+Lean
+Leverage
+Long-term
+Marketable
+Mastery
+Mentorship
+Absurd
+Acknowledge
+Acquire
+Adapt
+Addicted
+Adequate
+Admire
+Adopt
+Adore
+Advantage
+Advice
+Afford
+Afraid
+Agenda
+Aggressive
+Alike
+Alive
+Allow
+Almost
+Alone
+Amazing
+Ambition
+Amusing
+Ancient
+Annoy
+Annual
+Anxious
+Anyway
+Apartment
+Apologize
+Apparent
+Appeal
+Appearance
+Apply
+Appreciate
+Approach
+Appropriate
+Approve
+Approximate
+Area
+Argue
+Arrange
+Arrest
+Arrival
+Article
+Artificial
+Aspect
+Assist
+Assume
+Assure
+Attach
+Attack
+Attempt
+Attend
+Attitude
+Attract
+Acquisition
+Agenda
+Amortization
+Arbitrage
+Audit
+Bankruptcy
+Benchmark
+Board-of-directors
+Bottom-line
+Brainstorming
+Budget
+Capital
+Cash-flow
+CEO
+CFO
+Chairman
+Collaboration
+Commission
+Commodity
+Compliance
+Consolidation
+Consultant
+Consumer
+Contract
+COO
+Copyright
+Corporate
+Cost-effective
+CRM
+Deadline
+Debt
+Deficit
+Depreciation
+Director
+Discount
+Diversification
+Dividend
+Downsizing
+Earnings
+Economies-of-scale
+Efficiency
+Employee
+Employer
+Enterprise
+Entrepreneur
+Equity
+ERP
+Estimate
+Ethics
+Executive
+Expansion
+Expenses
+Expertise
+Export
+Facility
+Feedback

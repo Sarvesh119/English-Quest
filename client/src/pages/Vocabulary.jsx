@@ -13,7 +13,7 @@ const Vocabulary = () => {
   const difficulties = ['All', 'Easy', 'Medium', 'Hard'];
 
   useEffect(() => {
-    fetchWords();
+    fetchVocabulary();
   }, []);
 
   const fetchVocabulary = async () => {

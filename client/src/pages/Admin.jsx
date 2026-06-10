@@ -22,10 +22,13 @@ const Admin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const API_URL = import.meta.env.VITE_API_URL || 'https://english-quest-kf0e.onrender.com/api';
       const config = {
-        headers: { Authorization: `Bearer ${user.token}` }
+        headers: {
+          Authorization: `Bearer ${user.token}`
+        }
       };
-      await axios.post('https://english-quest-kf0e.onrender.com/api/vocabulary', newWord, config);
+      await axios.post(`${API_URL}/vocabulary`, newWord, config);
       toast.success('Word added successfully!');
       setNewWord({
         word: '',

@@ -16,9 +16,10 @@ const Vocabulary = () => {
     fetchWords();
   }, []);
 
-  const fetchWords = async () => {
+  const fetchVocabulary = async () => {
     try {
-      const { data } = await axios.get('https://english-quest-kf0e.onrender.com/api/vocabulary');
+      const API_URL = import.meta.env.VITE_API_URL || 'https://english-quest-kf0e.onrender.com/api';
+      const { data } = await axios.get(`${API_URL}/vocabulary`);
       setWords(data);
       setLoading(false);
     } catch (error) {

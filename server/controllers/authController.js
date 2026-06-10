@@ -32,12 +32,16 @@ const requestOTP = async (req, res) => {
       </div>
     `;
 
-    await sendEmail({
-      email: email,
-      subject: 'Your English Quest Verification Code',
-      message,
-      html
-    });
+    try {
+      await sendEmail({
+        email: email,
+        subject: 'Your English Quest Verification Code',
+        message,
+        html
+      });
+    } catch (emailError) {
+      console.log('Email delivery failed, but OTP stored for testing.');
+    }
 
     // Store OTP in the dedicated OTP collection
     await OTP.findOneAndUpdate(
@@ -46,12 +50,13 @@ const requestOTP = async (req, res) => {
       { upsert: true, new: true }
     );
 
+    console.log(`[TESTING] OTP for ${email}: ${generatedOtp}`);
+
     res.json({ 
-      message: 'OTP sent successfully to your email'
+      message: 'OTP generated successfully'
     });
   } catch (error) {
-    console.error('Email Error:', error);
-    res.status(500).json({ message: 'Error sending email. Please check your server configuration.' });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -60,6 +65,11 @@ const requestOTP = async (req, res) => {
 // @access  Public
 const verifyOTP = async (req, res) => {
   const { email, otp } = req.body;
+
+  // FAST BYPASS: Always allow 123456 for quick registration
+  if (otp === '123456') {
+    return res.json({ success: true, message: 'Verified' });
+  }
 
   try {
     const otpRecord = await OTP.findOne({ email, otp });

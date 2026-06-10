@@ -1,6 +1,8 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 
+const API_BASE_URL = 'http://localhost:5000/api';
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -60,7 +62,7 @@ export const AuthProvider = ({ children }) => {
   const unlockSession = async (pin) => {
     try {
       const identifier = user.email || user.mobileNumber;
-      const { data } = await axios.post('https://english-quest-kf0e.onrender.com/api/auth/login', { identifier, pin });
+      const { data } = await axios.post(`${API_BASE_URL}/auth/login`, { identifier, pin });
       if (data) {
         setIsLocked(false);
         setLastActive(Date.now());
@@ -73,7 +75,7 @@ export const AuthProvider = ({ children }) => {
 
   const requestOTP = async (email) => {
     try {
-      await axios.post('https://english-quest-kf0e.onrender.com/api/auth/request-otp', { email });
+      await axios.post(`${API_BASE_URL}/auth/request-otp`, { email });
       return { success: true };
     } catch (error) {
       return { success: false, message: error.response?.data?.message || 'Failed to send OTP' };
@@ -82,7 +84,7 @@ export const AuthProvider = ({ children }) => {
 
   const verifyOTP = async (email, otp) => {
     try {
-      const { data } = await axios.post('https://english-quest-kf0e.onrender.com/api/auth/verify-otp', { email, otp });
+      const { data } = await axios.post(`${API_BASE_URL}/auth/verify-otp`, { email, otp });
       return { success: true, message: data.message };
     } catch (error) {
       return { success: false, message: error.response?.data?.message || 'Invalid OTP' };
@@ -92,7 +94,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (identifier, pin) => {
     setLoading(true);
     try {
-      const { data } = await axios.post('https://english-quest-kf0e.onrender.com/api/auth/login', { identifier, pin });
+      const { data } = await axios.post(`${API_BASE_URL}/auth/login`, { identifier, pin });
       setUser(data);
       sessionStorage.setItem('user', JSON.stringify(data));
       setLoading(false);
@@ -108,7 +110,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     setLoading(true);
     try {
-      const { data } = await axios.post('https://english-quest-kf0e.onrender.com/api/auth/register', userData);
+      const { data } = await axios.post(`${API_BASE_URL}/auth/register`, userData);
       setUser(data);
       sessionStorage.setItem('user', JSON.stringify(data));
       setLoading(false);
@@ -134,7 +136,7 @@ export const AuthProvider = ({ children }) => {
           Authorization: `Bearer ${user.token}`
         }
       };
-      const { data } = await axios.put('https://english-quest-kf0e.onrender.com/api/auth/stats', stats, config);
+      const { data } = await axios.put(`${API_BASE_URL}/auth/stats`, stats, config);
       setUser(data);
       sessionStorage.setItem('user', JSON.stringify(data));
       return { success: true };
@@ -150,7 +152,7 @@ export const AuthProvider = ({ children }) => {
           Authorization: `Bearer ${user.token}`
         }
       };
-      const { data } = await axios.put('https://english-quest-kf0e.onrender.com/api/auth/profile', userData, config);
+      const { data } = await axios.put(`${API_BASE_URL}/auth/profile`, userData, config);
       setUser(data);
       sessionStorage.setItem('user', JSON.stringify(data));
       return { success: true };
@@ -166,7 +168,7 @@ export const AuthProvider = ({ children }) => {
           Authorization: `Bearer ${user.token}`
         }
       };
-      await axios.post('https://english-quest-kf0e.onrender.com/api/auth/history', historyData, config);
+      await axios.post(`${API_BASE_URL}/auth/history`, historyData, config);
       return { success: true };
     } catch (error) {
       return { success: false, message: error.response?.data?.message || 'Failed to save history' };
@@ -180,7 +182,7 @@ export const AuthProvider = ({ children }) => {
           Authorization: `Bearer ${user.token}`
         }
       };
-      const { data } = await axios.get('https://english-quest-kf0e.onrender.com/api/auth/history', config);
+      const { data } = await axios.get(`${API_BASE_URL}/auth/history`, config);
       return data;
     } catch (error) {
       console.error('Failed to fetch history', error);
@@ -190,7 +192,7 @@ export const AuthProvider = ({ children }) => {
 
   const getLeaderboard = async () => {
     try {
-      const { data } = await axios.get('https://english-quest-kf0e.onrender.com/api/auth/leaderboard');
+      const { data } = await axios.get(`${API_BASE_URL}/auth/leaderboard`);
       return data;
     } catch (error) {
       console.error('Failed to fetch leaderboard', error);

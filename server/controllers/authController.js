@@ -83,7 +83,12 @@ const verifyOTP = async (req, res) => {
 const registerUser = async (req, res) => {
   const { name, email, mobileNumber, pin } = req.body;
 
-  const userExists = await User.findOne({ $or: [{ email }, { mobileNumber }] });
+  const query = { email };
+  if (mobileNumber) {
+    query.$or = [{ email }, { mobileNumber }];
+  }
+
+  const userExists = await User.findOne(mobileNumber ? { $or: [{ email }, { mobileNumber }] } : { email });
 
   if (userExists) {
     return res.status(400).json({ message: 'User already exists' });
@@ -92,7 +97,7 @@ const registerUser = async (req, res) => {
   const user = await User.create({
     name,
     email,
-    mobileNumber,
+    mobileNumber: mobileNumber || undefined,
     pin
   });
 

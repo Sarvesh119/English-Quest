@@ -75,10 +75,18 @@ export const AuthProvider = ({ children }) => {
 
   const requestOTP = async (email) => {
     try {
-      await axios.post(`${API_BASE_URL}/auth/request-otp`, { email });
+      console.log(`Requesting OTP for ${email} at ${API_BASE_URL}/auth/request-otp`);
+      const { data } = await axios.post(`${API_BASE_URL}/auth/request-otp`, { email });
+      console.log('OTP Request Success:', data);
       return { success: true };
     } catch (error) {
-      return { success: false, message: error.response?.data?.message || 'Failed to send OTP' };
+      console.error('OTP Request Error Detailed:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+        url: error.config?.url
+      });
+      return { success: false, message: error.response?.data?.message || 'Failed to send OTP. Check if backend is running.' };
     }
   };
 
@@ -87,6 +95,7 @@ export const AuthProvider = ({ children }) => {
       const { data } = await axios.post(`${API_BASE_URL}/auth/verify-otp`, { email, otp });
       return { success: true, message: data.message };
     } catch (error) {
+      console.error('OTP Verify Error:', error.response?.data || error.message);
       return { success: false, message: error.response?.data?.message || 'Invalid OTP' };
     }
   };
@@ -102,6 +111,7 @@ export const AuthProvider = ({ children }) => {
       setLastActive(Date.now());
       return { success: true };
     } catch (error) {
+      console.error('Login Error:', error.response?.data || error.message);
       setLoading(false);
       return { success: false, message: error.response?.data?.message || 'Login failed' };
     }
@@ -110,7 +120,9 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     setLoading(true);
     try {
+      console.log('Attempting final registration...');
       const { data } = await axios.post(`${API_BASE_URL}/auth/register`, userData);
+      console.log('Registration Success:', data);
       setUser(data);
       sessionStorage.setItem('user', JSON.stringify(data));
       setLoading(false);
@@ -118,6 +130,11 @@ export const AuthProvider = ({ children }) => {
       setLastActive(Date.now());
       return { success: true };
     } catch (error) {
+      console.error('Registration Error Detailed:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
       setLoading(false);
       return { success: false, message: error.response?.data?.message || 'Registration failed' };
     }

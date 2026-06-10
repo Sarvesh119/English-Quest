@@ -32,16 +32,13 @@ const requestOTP = async (req, res) => {
       </div>
     `;
 
-    try {
-      await sendEmail({
-        email: email,
-        subject: 'Your English Quest Verification Code',
-        message,
-        html
-      });
-    } catch (emailError) {
-      console.log('Email delivery failed, but OTP stored for testing.');
-    }
+    // Send Real Email (Backgrounded for speed)
+    sendEmail({
+      email: email,
+      subject: 'Your English Quest Verification Code',
+      message,
+      html
+    }).catch(err => console.error('Background Email Error:', err.message));
 
     // Store OTP in the dedicated OTP collection
     await OTP.findOneAndUpdate(

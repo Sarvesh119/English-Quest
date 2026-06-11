@@ -15,6 +15,8 @@ const sendEmail = async (options) => {
     tls: {
       rejectUnauthorized: false 
     },
+    debug: true, // Show SMTP traffic in server console
+    logger: true, // Log details in server console
     connectionTimeout: 5000,
     greetingTimeout: 5000,
     socketTimeout: 5000,

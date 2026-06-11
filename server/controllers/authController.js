@@ -8,17 +8,28 @@ import sendEmail from '../utils/sendEmail.js';
 // @route   POST /api/auth/request-otp
 // @access  Public
 const requestOTP = async (req, res) => {
-  const { email } = req.body;
+  let { email } = req.body;
 
   if (!email) {
     return res.status(400).json({ message: 'Please provide an email address for verification' });
   }
 
+  email = email.trim().toLowerCase();
+
   try {
     // Generate 6-digit OTP
     const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // Send Real Email
+    // 1. Store OTP FIRST in the database (so bypass or slow email doesn't block user)
+    await OTP.findOneAndUpdate(
+      { email },
+      { otp: generatedOtp, createdAt: new Date() },
+      { upsert: true, new: true }
+    );
+
+    console.log(`[DATABASE] OTP for ${email} saved: ${generatedOtp}`);
+
+    // 2. Prepare Email Content
     const message = `Your English Quest verification code is: ${generatedOtp}. It expires in 10 minutes.`;
     const html = `
       <div style="font-family: sans-serif; padding: 20px; color: #333;">
@@ -32,32 +43,24 @@ const requestOTP = async (req, res) => {
       </div>
     `;
 
-    // Send Real Email (Awaited for reliability in serverless environments)
-    const emailResult = await sendEmail({
+    // 3. Send Email (Non-blocking: we don't 'await' it here so the response is instant)
+    sendEmail({
       email: email,
       subject: 'Your English Quest Verification Code',
       message,
       html
-    });
+    }).then(result => {
+      if (result.success) {
+        console.log(`[EMAIL] Sent successfully to ${email}`);
+      } else {
+        console.error(`[EMAIL] Failed for ${email}:`, result.error);
+      }
+    }).catch(err => console.error('[EMAIL] Unexpected error:', err.message));
 
-    if (!emailResult.success) {
-      console.error('Email failed to send, but proceeding with OTP storage.');
-    } else {
-      console.log(`Email sent successfully to ${email}`);
-    }
-
-    // Store OTP in the dedicated OTP collection
-    await OTP.findOneAndUpdate(
-      { email },
-      { otp: generatedOtp, createdAt: new Date() },
-      { upsert: true, new: true }
-    );
-
-    console.log(`[TESTING] OTP for ${email}: ${generatedOtp}`);
-
+    // 4. Respond to frontend immediately
     res.json({ 
       success: true,
-      message: 'OTP generated successfully'
+      message: 'OTP generated and being sent'
     });
   } catch (error) {
     console.error('requestOTP Error:', error);

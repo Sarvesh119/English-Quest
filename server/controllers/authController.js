@@ -33,17 +33,17 @@ const requestOTP = async (req, res) => {
     `;
 
     // Send Real Email (Awaited for reliability in serverless environments)
-    try {
-      await sendEmail({
-        email: email,
-        subject: 'Your English Quest Verification Code',
-        message,
-        html
-      });
+    const emailResult = await sendEmail({
+      email: email,
+      subject: 'Your English Quest Verification Code',
+      message,
+      html
+    });
+
+    if (!emailResult.success) {
+      console.error('Email failed to send, but proceeding with OTP storage.');
+    } else {
       console.log(`Email sent successfully to ${email}`);
-    } catch (emailErr) {
-      console.error('Email Sending Error:', emailErr.message);
-      // We still continue to store OTP so 123456 or server-side checking works
     }
 
     // Store OTP in the dedicated OTP collection

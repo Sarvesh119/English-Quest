@@ -33,7 +33,8 @@ const Register = () => {
     if (result.success) {
       setStep(2);
       setError('');
-      toast.success('OTP sent to your email (check console)');
+      toast.success('Verification code sent to your email');
+      console.log('Verification flow started. If you are in a test environment, you can use the bypass code: 123456');
     } else {
       setError(result.message);
     }

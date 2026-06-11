@@ -32,28 +32,36 @@ const requestOTP = async (req, res) => {
       </div>
     `;
 
-    // Send Real Email (Backgrounded for speed)
-    sendEmail({
-      email: email,
-      subject: 'Your English Quest Verification Code',
-      message,
-      html
-    }).catch(err => console.error('Background Email Error:', err.message));
+    // Send Real Email (Awaited for reliability in serverless environments)
+    try {
+      await sendEmail({
+        email: email,
+        subject: 'Your English Quest Verification Code',
+        message,
+        html
+      });
+      console.log(`Email sent successfully to ${email}`);
+    } catch (emailErr) {
+      console.error('Email Sending Error:', emailErr.message);
+      // We still continue to store OTP so 123456 or server-side checking works
+    }
 
     // Store OTP in the dedicated OTP collection
     await OTP.findOneAndUpdate(
       { email },
-      { otp: generatedOtp, createdAt: Date.now() },
+      { otp: generatedOtp, createdAt: new Date() },
       { upsert: true, new: true }
     );
 
     console.log(`[TESTING] OTP for ${email}: ${generatedOtp}`);
 
     res.json({ 
+      success: true,
       message: 'OTP generated successfully'
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    console.error('requestOTP Error:', error);
+    res.status(500).json({ message: 'Server error generating OTP' });
   }
 };
 

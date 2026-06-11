@@ -76,27 +76,31 @@ export const AuthProvider = ({ children }) => {
   const requestOTP = async (email) => {
     try {
       console.log(`Requesting OTP for ${email} at ${API_BASE_URL}/auth/request-otp`);
-      const { data } = await axios.post(`${API_BASE_URL}/auth/request-otp`, { email });
-      console.log('OTP Request Success:', data);
-      return { success: true };
+      const response = await axios.post(`${API_BASE_URL}/auth/request-otp`, { email });
+      console.log('OTP Request Success:', response.data);
+      return { success: true, message: response.data.message };
     } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to send OTP';
       console.error('OTP Request Error Detailed:', {
         message: error.message,
         response: error.response?.data,
         status: error.response?.status,
         url: error.config?.url
       });
-      return { success: false, message: error.response?.data?.message || 'Failed to send OTP. Check if backend is running.' };
+      return { success: false, message: errorMessage };
     }
   };
 
   const verifyOTP = async (email, otp) => {
     try {
-      const { data } = await axios.post(`${API_BASE_URL}/auth/verify-otp`, { email, otp });
-      return { success: true, message: data.message };
+      console.log(`Verifying OTP for ${email}`);
+      const response = await axios.post(`${API_BASE_URL}/auth/verify-otp`, { email, otp });
+      console.log('OTP Verify Success:', response.data);
+      return { success: true, message: response.data.message };
     } catch (error) {
+      const errorMessage = error.response?.data?.message || error.message || 'Invalid OTP';
       console.error('OTP Verify Error:', error.response?.data || error.message);
-      return { success: false, message: error.response?.data?.message || 'Invalid OTP' };
+      return { success: false, message: errorMessage };
     }
   };
 

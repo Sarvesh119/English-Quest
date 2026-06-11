@@ -1,18 +1,14 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 
-let raw_url = (import.meta.env.VITE_API_URL || 'https://english-quest-kf0e.onrender.com/api').trim();
-// Remove trailing slash if present to normalize
-raw_url = raw_url.replace(/\/+$/, '');
-// Ensure it ends with /api
-const API_BASE_URL = raw_url.endsWith('/api') ? raw_url : `${raw_url}/api`;
+// Hardcoded for production to avoid 404 errors on Render
+const API_BASE_URL = 'https://english-quest-kf0e.onrender.com/api';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   useEffect(() => {
-    console.log('--- AUTH SYSTEM INITIALIZED ---');
-    console.log('Target API:', API_BASE_URL);
+    console.log('API CONNECTED TO:', API_BASE_URL);
   }, []);
   const [user, setUser] = useState(JSON.parse(sessionStorage.getItem('user')) || null);
   const [loading, setLoading] = useState(false);

@@ -25,9 +25,9 @@ const Quiz = () => {
   const startNewQuiz = async () => {
     setLoading(true);
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'https://english-quest-kf0e.onrender.com/api';
+      const API_URL = import.meta.env.VITE_API_URL || 'https://english-quest-fn74.onrender.com/api';
       const { data } = await axios.get(`${API_URL}/vocabulary/random?count=10`);
-      
+
       // Transform vocabulary into questions
       const formattedQuestions = data.map(word => {
         // Find valid question types (where answer is not N/A or None)
@@ -37,7 +37,7 @@ const Quiz = () => {
         if (word.antonym && !['N/A', 'None', 'none', 'n/a'].includes(word.antonym)) validTypes.push(2);
 
         // Default to Meaning if no valid types found (shouldn't happen with schema)
-        const type = validTypes.length > 0 
+        const type = validTypes.length > 0
           ? validTypes[Math.floor(Math.random() * validTypes.length)]
           : 0;
 
@@ -108,7 +108,7 @@ const Quiz = () => {
       setIsCorrect(null);
     } else {
       setShowResult(true);
-      
+
       // Save to history
       addHistory({
         title: 'Vocabulary Quest',
@@ -144,7 +144,7 @@ const Quiz = () => {
 
   if (questions.length === 0) return (
     <div className="max-w-2xl mx-auto mt-20 px-4 text-center">
-      <motion.div 
+      <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         className="card py-12"
@@ -152,7 +152,7 @@ const Quiz = () => {
         <Sparkles className="w-16 h-16 mx-auto mb-6 text-gray-300" />
         <h2 className="text-3xl font-black text-gray-900 mb-4">No Questions Found</h2>
         <p className="text-gray-600 font-bold mb-8">
-          It looks like the vocabulary database is empty. 
+          It looks like the vocabulary database is empty.
           Please make sure to run the seeder script (<code className="bg-gray-100 px-2 py-1 rounded">npm run data:import</code>) to add some words!
         </p>
         <button onClick={startNewQuiz} className="btn-primary px-10 py-4">RETRY</button>
@@ -162,7 +162,7 @@ const Quiz = () => {
 
   if (showResult) return (
     <div className="max-w-2xl mx-auto mt-20 px-4 text-center">
-      <motion.div 
+      <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         className="card py-12"
@@ -170,7 +170,7 @@ const Quiz = () => {
         <Trophy className={`w-24 h-24 mx-auto mb-6 ${score >= 7 ? 'text-yellow-500' : 'text-gray-300'}`} />
         <h2 className="text-4xl font-black text-gray-900 mb-2">Quest Completed!</h2>
         <p className="text-gray-600 font-bold text-xl mb-8">You scored {score} out of {questions.length}</p>
-        
+
         <div className="grid grid-cols-2 gap-4 mb-10">
           <div className="bg-primary-50 p-4 rounded-2xl border-2 border-primary-100">
             <span className="text-primary-600 font-black text-2xl">+{score * 10}</span>
@@ -197,7 +197,7 @@ const Quiz = () => {
       {/* Progress Header */}
       <div className="flex items-center gap-4 mb-10">
         <div className="bg-gray-200 h-4 flex-grow rounded-full overflow-hidden border-2 border-gray-100">
-          <motion.div 
+          <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
             className="h-full bg-primary-500"
@@ -232,8 +232,8 @@ const Quiz = () => {
                 onClick={() => handleOptionClick(option)}
                 className={`
                   w-full text-left p-6 rounded-2xl border-2 font-bold text-lg transition-all
-                  ${selectedOption === option 
-                    ? (isCorrect ? 'bg-green-100 border-green-500 text-green-700' : 'bg-red-100 border-red-500 text-red-700') 
+                  ${selectedOption === option
+                    ? (isCorrect ? 'bg-green-100 border-green-500 text-green-700' : 'bg-red-100 border-red-500 text-red-700')
                     : (selectedOption !== null && option === currentQuestion.correctAnswer ? 'bg-green-100 border-green-500 text-green-700' : 'bg-white border-gray-200 hover:bg-gray-50 active:translate-y-1')
                   }
                 `}

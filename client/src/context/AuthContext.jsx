@@ -2,7 +2,7 @@ import { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 
 // Hardcoded for production to avoid 404 errors on Render
-const API_BASE_URL = 'https://english-quest-kf0e.onrender.com/api';
+const API_BASE_URL = 'https://english-quest-fn74.onrender.com/api';
 
 const AuthContext = createContext();
 

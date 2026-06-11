@@ -21,7 +21,7 @@ const Vocabulary = () => {
     setLoading(true);
     setError(null);
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'https://english-quest-kf0e.onrender.com/api';
+      const API_URL = import.meta.env.VITE_API_URL || 'https://english-quest-fn74.onrender.com/api';
       const { data } = await axios.get(`${API_URL}/vocabulary`);
       setWords(data);
       setLoading(false);

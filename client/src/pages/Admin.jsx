@@ -22,7 +22,7 @@ const Admin = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const API_URL = import.meta.env.VITE_API_URL || 'https://english-quest-kf0e.onrender.com/api';
+      const API_URL = import.meta.env.VITE_API_URL || 'https://english-quest-fn74.onrender.com/api';
       const config = {
         headers: {
           Authorization: `Bearer ${user.token}`

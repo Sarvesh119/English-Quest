@@ -1,26 +1,24 @@
 import nodemailer from 'nodemailer';
 
+
 const sendEmail = async (options) => {
   const port = parseInt(process.env.EMAIL_PORT || '587');
-  
+
   const transporter = nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: port,
-    secure: port === 465, // true for 465, false for others (like 587)
+    secure: port === 465, // true for 465, false for 587
     auth: {
       user: process.env.EMAIL_USER,
-      // Strip spaces from App Password if present
       pass: process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s/g, '') : '',
     },
-    tls: {
-      rejectUnauthorized: false 
-    },
-    debug: true, // Show SMTP traffic in server console
-    logger: true, // Log details in server console
-    connectionTimeout: 5000,
-    greetingTimeout: 5000,
-    socketTimeout: 5000,
+    // REMOVED tls.rejectUnauthorized: false - this was causing production issues
+    connectionTimeout: 10000,
+    socketTimeout: 10000,
+    debug: false, // Set to true only if you need SMTP traffic debugging
+    logger: false, // Set to true only if you need detailed logging
   });
+
 
   const message = {
     from: `"${process.env.FROM_NAME}" <${process.env.FROM_EMAIL}>`,
@@ -30,15 +28,29 @@ const sendEmail = async (options) => {
     html: options.html,
   };
 
+
   try {
-    console.log(`Attempting to send email to ${options.email} via ${process.env.EMAIL_HOST}...`);
+    console.log(`[sendEmail] 📧 Attempting to send to ${options.email}`);
+    console.log('[sendEmail] SMTP Host:', process.env.EMAIL_HOST);
+    console.log('[sendEmail] SMTP Port:', port);
+    console.log('[sendEmail] Auth User:', process.env.EMAIL_USER);
+    console.log('[sendEmail] Auth Pass:', process.env.EMAIL_PASS ? 'SET ✓' : 'NOT SET ✗');
+
     const info = await transporter.sendMail(message);
-    console.log('Email sent successfully:', info.messageId);
+
+    console.log('[sendEmail] ✅ Email sent successfully:', info.messageId);
+    console.log('[sendEmail] Message Response:', info.response);
+
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error('Nodemailer Error:', error.message);
+    console.error('[sendEmail] ❌ Nodemailer Error:', error.message);
+    console.error('[sendEmail] Error Code:', error.code);
+    console.error('[sendEmail] Error Command:', error.command);
+    console.error('[sendEmail] Full Error:', error);
+
     return { success: false, error: error.message };
   }
 };
+
 
 export default sendEmail;

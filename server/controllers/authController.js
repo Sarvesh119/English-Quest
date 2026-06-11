@@ -4,6 +4,7 @@ import OTP from '../models/OTP.js';
 import generateToken from '../utils/generateToken.js';
 import sendEmail from '../utils/sendEmail.js';
 
+
 // @desc    Request OTP for registration/verification
 // @route   POST /api/auth/request-otp
 // @access  Public
@@ -20,14 +21,19 @@ const requestOTP = async (req, res) => {
     // Generate 6-digit OTP
     const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    // 1. Store OTP FIRST in the database (so bypass or slow email doesn't block user)
+    console.log(`[OTP REQUEST] Starting OTP generation for ${email}`);
+    console.log('[OTP REQUEST] EMAIL_HOST:', process.env.EMAIL_HOST || 'NOT SET');
+    console.log('[OTP REQUEST] EMAIL_USER:', process.env.EMAIL_USER || 'NOT SET');
+    console.log('[OTP REQUEST] EMAIL_PASS:', process.env.EMAIL_PASS ? 'SET ✓' : 'NOT SET ✗');
+
+    // 1. Store OTP FIRST in the database
     await OTP.findOneAndUpdate(
       { email },
       { otp: generatedOtp, createdAt: new Date() },
       { upsert: true, new: true }
     );
 
-    console.log(`[DATABASE] OTP for ${email} saved: ${generatedOtp}`);
+    console.log(`[DATABASE] ✅ OTP for ${email} saved: ${generatedOtp}`);
 
     // 2. Prepare Email Content
     const message = `Your English Quest verification code is: ${generatedOtp}. It expires in 10 minutes.`;
@@ -43,30 +49,42 @@ const requestOTP = async (req, res) => {
       </div>
     `;
 
-    // 3. Send Email (Non-blocking: we don't 'await' it here so the response is instant)
-    sendEmail({
+    // 3. SEND EMAIL & Await result
+    console.log(`[EMAIL] 📧 Attempting to send to ${email} via ${process.env.EMAIL_HOST}:${process.env.EMAIL_PORT}`);
+    
+    const emailResult = await sendEmail({
       email: email,
       subject: 'Your English Quest Verification Code',
       message,
       html
-    }).then(result => {
-      if (result.success) {
-        console.log(`[EMAIL] Sent successfully to ${email}`);
-      } else {
-        console.error(`[EMAIL] Failed for ${email}:`, result.error);
-      }
-    }).catch(err => console.error('[EMAIL] Unexpected error:', err.message));
+    });
 
-    // 4. Respond to frontend immediately
+    console.log('[EMAIL] Full result:', JSON.stringify(emailResult));
+
+    if (!emailResult.success) {
+      console.error(`[EMAIL] ❌ FAILED for ${email}:`, emailResult.error);
+      res.json({ 
+        success: true,
+        message: 'OTP generated but email failed: ' + emailResult.error
+      });
+      return;
+    }
+
+    console.log(`[EMAIL] ✅ Successfully sent to ${email}`, emailResult.messageId);
+
+    // 4. Respond successfully
     res.json({ 
       success: true,
-      message: 'OTP generated and being sent'
+      message: 'OTP sent successfully to your email'
     });
+
   } catch (error) {
-    console.error('requestOTP Error:', error);
+    console.error('❌ requestOTP Error:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ message: 'Server error generating OTP' });
   }
 };
+
 
 // @desc    Verify OTP
 // @route   POST /api/auth/verify-otp
@@ -94,6 +112,7 @@ const verifyOTP = async (req, res) => {
     res.status(500).json({ message: 'Server error during OTP verification' });
   }
 };
+
 
 // @desc    Register a new user with PIN
 // @route   POST /api/auth/register
@@ -132,6 +151,7 @@ const registerUser = async (req, res) => {
     res.status(400).json({ message: 'Invalid user data' });
   }
 };
+
 
 // @desc    Authenticate a user via PIN & get token
 // @route   POST /api/auth/login
@@ -186,6 +206,7 @@ const loginUser = async (req, res) => {
   }
 };
 
+
 // @desc    Get user profile
 // @route   GET /api/auth/profile
 // @access  Private
@@ -210,6 +231,7 @@ const getUserProfile = async (req, res) => {
     res.status(404).json({ message: 'User not found' });
   }
 };
+
 
 // @desc    Update user stats (XP, coins, words learned, etc.)
 // @route   PUT /api/auth/stats
@@ -250,6 +272,7 @@ const updateUserStats = async (req, res) => {
   }
 };
 
+
 // @desc    Update user profile
 // @route   PUT /api/auth/profile
 // @access  Private
@@ -283,6 +306,7 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
+
 // @desc    Add quiz history
 // @route   POST /api/auth/history
 // @access  Private
@@ -303,6 +327,7 @@ const addHistory = async (req, res) => {
   }
 };
 
+
 // @desc    Get user history
 // @route   GET /api/auth/history
 // @access  Private
@@ -310,6 +335,7 @@ const getUserHistory = async (req, res) => {
   const history = await History.find({ user: req.user._id }).sort({ createdAt: -1 });
   res.json(history);
 };
+
 
 // @desc    Get leaderboard (top users by XP)
 // @route   GET /api/auth/leaderboard
@@ -325,5 +351,6 @@ const getLeaderboard = async (req, res) => {
     res.status(500).json({ message: 'Server error fetching leaderboard' });
   }
 };
+
 
 export { registerUser, loginUser, getUserProfile, updateUserStats, updateUserProfile, addHistory, getUserHistory, getLeaderboard, requestOTP, verifyOTP };

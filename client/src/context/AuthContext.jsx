@@ -1,11 +1,13 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://english-quest-kf0e.onrender.com/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  // ... rest of state ...
+  console.log('AuthContext: Using API URL ->', API_BASE_URL);
   const [user, setUser] = useState(JSON.parse(sessionStorage.getItem('user')) || null);
   const [loading, setLoading] = useState(false);
   const [isLocked, setIsLocked] = useState(false);

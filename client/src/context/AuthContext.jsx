@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 
-let raw_url = (import.meta.env.VITE_API_URL || 'https://english-quest-kf0e.onrender.com').trim();
+let raw_url = (import.meta.env.VITE_API_URL || 'https://english-quest-kf0e.onrender.com/api').trim();
 // Remove trailing slash if present to normalize
 raw_url = raw_url.replace(/\/+$/, '');
 // Ensure it ends with /api

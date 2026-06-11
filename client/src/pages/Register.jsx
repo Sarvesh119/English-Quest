@@ -24,34 +24,46 @@ const Register = () => {
 
   const handleInfoSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.email) {
-      return setError('Please provide your Name and Email Address');
+    try {
+      if (!formData.name || !formData.email) {
+        return setError('Please provide your Name and Email Address');
+      }
+      
+      setLoading(true);
+      const result = await requestOTP(formData.email);
+      if (result.success) {
+        setStep(2);
+        setError('');
+        toast.success('Verification code sent to your email');
+        console.log('Verification flow started. If you are in a test environment, you can use the bypass code: 123456');
+      } else {
+        setError(result.message);
+      }
+    } catch (err) {
+      console.error('Fatal error in handleInfoSubmit:', err);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(true);
-    const result = await requestOTP(formData.email);
-    if (result.success) {
-      setStep(2);
-      setError('');
-      toast.success('Verification code sent to your email');
-      console.log('Verification flow started. If you are in a test environment, you can use the bypass code: 123456');
-    } else {
-      setError(result.message);
-    }
-    setLoading(false);
   };
 
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    const result = await verifyOTP(formData.email, otp);
-    if (result.success) {
-      setStep(3);
-      setError('');
-    } else {
-      setError(result.message || 'Invalid OTP');
+    try {
+      setLoading(true);
+      const result = await verifyOTP(formData.email, otp);
+      if (result.success) {
+        setStep(3);
+        setError('');
+      } else {
+        setError(result.message || 'Invalid OTP');
+      }
+    } catch (err) {
+      console.error('Fatal error in handleOtpSubmit:', err);
+      setError('An unexpected error occurred during verification.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handlePinAdd = (num) => {

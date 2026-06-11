@@ -1,16 +1,19 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 
-let BASE_URL = import.meta.env.VITE_API_URL || 'https://english-quest-kf0e.onrender.com';
-if (!BASE_URL.endsWith('/api')) {
-  BASE_URL = BASE_URL.endsWith('/') ? `${BASE_URL}api` : `${BASE_URL}/api`;
-}
-const API_BASE_URL = BASE_URL;
+let raw_url = (import.meta.env.VITE_API_URL || 'https://english-quest-kf0e.onrender.com').trim();
+// Remove trailing slash if present to normalize
+raw_url = raw_url.replace(/\/+$/, '');
+// Ensure it ends with /api
+const API_BASE_URL = raw_url.endsWith('/api') ? raw_url : `${raw_url}/api`;
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  console.log('AuthContext: API URL ->', API_BASE_URL);
+  useEffect(() => {
+    console.log('--- AUTH SYSTEM INITIALIZED ---');
+    console.log('Target API:', API_BASE_URL);
+  }, []);
   const [user, setUser] = useState(JSON.parse(sessionStorage.getItem('user')) || null);
   const [loading, setLoading] = useState(false);
   const [isLocked, setIsLocked] = useState(false);

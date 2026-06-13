@@ -35,6 +35,7 @@ const sendEmail = async (options) => {
         user: user,
         pass: pass,
       },
+      family: 4, // Force IPv4 to avoid ENETUNREACH errors on IPv6
       connectionTimeout: 10000, 
       greetingTimeout: 10000,   
       socketTimeout: 10000,     

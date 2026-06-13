@@ -25,16 +25,16 @@ const Register = () => {
   const handleInfoSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (!formData.name || !formData.mobileNumber) {
-        return setError('Please provide your Name and Mobile Number');
+      if (!formData.name || !formData.email || !formData.mobileNumber) {
+        return setError('Please provide all details (Name, Email, and Mobile)');
       }
       
       setLoading(true);
-      const result = await requestOTP(formData.mobileNumber);
+      const result = await requestOTP({ email: formData.email });
       if (result.success) {
         setStep(2);
         setError('');
-        toast.success('Verification code sent to your mobile');
+        toast.success('Verification code sent to your email');
         console.log('Verification flow started. If you are in a test environment, you can use the bypass code: 123456');
       } else {
         setError(result.message);
@@ -51,7 +51,7 @@ const Register = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const result = await verifyOTP(formData.mobileNumber, otp);
+      const result = await verifyOTP({ email: formData.email, otp });
       if (result.success) {
         setStep(3);
         setError('');
@@ -191,7 +191,7 @@ const Register = () => {
               onSubmit={handleOtpSubmit}
               className="space-y-6"
             >
-              <p className="text-center text-sm font-medium text-gray-600">Enter the 6-digit code sent to your mobile.</p>
+              <p className="text-center text-sm font-medium text-gray-600">Enter the 6-digit code sent to your email.</p>
               <input
                 type="text"
                 maxLength="6"

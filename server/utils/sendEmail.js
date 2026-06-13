@@ -1,34 +1,45 @@
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import nodemailer from 'nodemailer';
 
 const sendEmail = async (options) => {
   try {
-    console.log('[sendEmail] 📧 Sending OTP via Resend API');
-    console.log('[sendEmail] To:', options.email);
-    console.log('[sendEmail] Subject:', options.subject);
+    const port = parseInt(process.env.EMAIL_PORT || '587');
+    const user = process.env.EMAIL_USER;
+    const pass = process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s/g, '') : '';
 
-    const { data, error } = await resend.emails.send({
-      from: `${process.env.FROM_NAME} <onboarding@resend.dev>`,
+    console.log('[sendEmail] 📧 Sending Email via Nodemailer');
+    console.log('[sendEmail] Host:', process.env.EMAIL_HOST);
+    console.log('[sendEmail] To:', options.email);
+
+    const transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_HOST,
+      port: port,
+      secure: port === 465, // true for 465, false for other ports
+      auth: {
+        user: user,
+        pass: pass,
+      },
+      tls: {
+        // Do not fail on invalid certs
+        rejectUnauthorized: false
+      }
+    });
+
+    const mailOptions = {
+      from: `"${process.env.FROM_NAME}" <${process.env.FROM_EMAIL || user}>`,
       to: options.email,
       subject: options.subject,
       text: options.message,
       html: options.html,
-    });
+    };
 
-    if (error) {
-      console.error('[sendEmail] ❌ Resend Error:', error);
-      console.error('[sendEmail] Error message:', error.message);
-      return { success: false, error: error.message };
-    }
+    const info = await transporter.sendMail(mailOptions);
 
-    console.log('[sendEmail] ✅ Email sent successfully via Resend');
-    console.log('[sendEmail] Message ID:', data.id);
-    return { success: true, messageId: data.id };
+    console.log('[sendEmail] ✅ Email sent successfully');
+    console.log('[sendEmail] Message ID:', info.messageId);
+    return { success: true, messageId: info.messageId };
 
   } catch (error) {
-    console.error('[sendEmail] ❌ Unexpected Error:', error);
-    console.error('[sendEmail] Error:', error.message);
+    console.error('[sendEmail] ❌ Nodemailer Error:', error);
     return { success: false, error: error.message };
   }
 };

@@ -1,25 +1,48 @@
+import twilio from 'twilio';
+
 /**
- * Dummy SMS utility for sending OTP codes.
- * In a production environment, you would integrate this with a service like Twilio, Vonage, or AWS SNS.
+ * SMS utility for sending OTP codes using Twilio.
+ * Requires the following environment variables:
+ * - TWILIO_ACCOUNT_SID
+ * - TWILIO_AUTH_TOKEN
+ * - TWILIO_PHONE_NUMBER
  */
 
 const sendSMS = async (options) => {
   try {
     const { mobileNumber, message } = options;
-    
-    console.log('--------------------------------------------------');
-    console.log(`[SMS UTILITY] 📱 Sending SMS to: ${mobileNumber}`);
-    console.log(`[SMS UTILITY] ✉️ Message: ${message}`);
-    console.log('--------------------------------------------------');
 
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Check if Twilio credentials are provided
+    if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) {
+      console.log(`[SMS UTILITY] 📱 Sending real SMS via Twilio to: ${mobileNumber}`);
+      
+      const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
-    // Return success
-    return {
-      success: true,
-      messageId: `simulated-sms-${Date.now()}`
-    };
+      const response = await client.messages.create({
+        body: message,
+        from: process.env.TWILIO_PHONE_NUMBER,
+        to: mobileNumber
+      });
+
+      console.log(`[SMS UTILITY] ✅ Twilio SMS sent: ${response.sid}`);
+      return {
+        success: true,
+        messageId: response.sid
+      };
+    } else {
+      // Fallback to simulation if credentials are missing
+      console.log('--------------------------------------------------');
+      console.log('[SMS UTILITY] ⚠️ MISSING TWILIO CREDENTIALS');
+      console.log(`[SMS UTILITY] 📱 Simulated SMS to: ${mobileNumber}`);
+      console.log(`[SMS UTILITY] ✉️ Message: ${message}`);
+      console.log('--------------------------------------------------');
+
+      // Return success anyway so the flow continues in dev
+      return {
+        success: true,
+        messageId: `simulated-sms-${Date.now()}`
+      };
+    }
   } catch (error) {
     console.error('[SMS UTILITY] ❌ Error sending SMS:', error);
     return {

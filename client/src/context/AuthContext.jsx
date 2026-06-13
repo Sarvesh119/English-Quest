@@ -77,10 +77,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const requestOTP = async (email) => {
+  const requestOTP = async (mobileNumber) => {
     try {
-      console.log(`Requesting OTP for ${email} at ${API_BASE_URL}/auth/request-otp`);
-      const response = await axios.post(`${API_BASE_URL}/auth/request-otp`, { email });
+      console.log(`Requesting OTP for ${mobileNumber} at ${API_BASE_URL}/auth/request-otp`);
+      const response = await axios.post(`${API_BASE_URL}/auth/request-otp`, { mobileNumber });
       console.log('OTP Request Success:', response.data);
       return { success: true, message: response.data.message };
     } catch (error) {
@@ -95,10 +95,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const verifyOTP = async (email, otp) => {
+  const verifyOTP = async (mobileNumber, otp) => {
     try {
-      console.log(`Verifying OTP for ${email}`);
-      const response = await axios.post(`${API_BASE_URL}/auth/verify-otp`, { email, otp });
+      console.log(`Verifying OTP for ${mobileNumber}`);
+      const response = await axios.post(`${API_BASE_URL}/auth/verify-otp`, { mobileNumber, otp });
       console.log('OTP Verify Success:', response.data);
       return { success: true, message: response.data.message };
     } catch (error) {

@@ -25,16 +25,16 @@ const Register = () => {
   const handleInfoSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (!formData.name || !formData.email) {
-        return setError('Please provide your Name and Email Address');
+      if (!formData.name || !formData.mobileNumber) {
+        return setError('Please provide your Name and Mobile Number');
       }
       
       setLoading(true);
-      const result = await requestOTP(formData.email);
+      const result = await requestOTP(formData.mobileNumber);
       if (result.success) {
         setStep(2);
         setError('');
-        toast.success('Verification code sent to your email');
+        toast.success('Verification code sent to your mobile');
         console.log('Verification flow started. If you are in a test environment, you can use the bypass code: 123456');
       } else {
         setError(result.message);
@@ -51,7 +51,7 @@ const Register = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const result = await verifyOTP(formData.email, otp);
+      const result = await verifyOTP(formData.mobileNumber, otp);
       if (result.success) {
         setStep(3);
         setError('');
@@ -146,6 +146,20 @@ const Register = () => {
               </div>
 
               <div className="space-y-2">
+                <label className="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Mobile Number</label>
+                <div className="relative">
+                  <Smartphone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type="tel"
+                    placeholder="+1 234 567 890"
+                    className="input-field pl-12"
+                    value={formData.mobileNumber}
+                    onChange={(e) => setFormData({ ...formData, mobileNumber: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
                 <label className="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Email Address</label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -155,20 +169,6 @@ const Register = () => {
                     className="input-field pl-12"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-black text-gray-400 uppercase tracking-widest pl-1">Mobile Number (Optional)</label>
-                <div className="relative">
-                  <Smartphone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <input
-                    type="tel"
-                    placeholder="+1 234 567 890"
-                    className="input-field pl-12"
-                    value={formData.mobileNumber}
-                    onChange={(e) => setFormData({ ...formData, mobileNumber: e.target.value })}
                   />
                 </div>
               </div>
@@ -191,7 +191,7 @@ const Register = () => {
               onSubmit={handleOtpSubmit}
               className="space-y-6"
             >
-              <p className="text-center text-sm font-medium text-gray-600">Enter the 6-digit code sent to your email.</p>
+              <p className="text-center text-sm font-medium text-gray-600">Enter the 6-digit code sent to your mobile.</p>
               <input
                 type="text"
                 maxLength="6"

@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
   },
   mobileNumber: {
     type: String,
-    sparse: true,
+    required: [true, 'Please add a mobile number'],
     unique: true
   },
   profilePicture: {

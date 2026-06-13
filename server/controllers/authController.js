@@ -3,84 +3,66 @@ import History from '../models/History.js';
 import OTP from '../models/OTP.js';
 import generateToken from '../utils/generateToken.js';
 import sendEmail from '../utils/sendEmail.js';
+import sendSMS from '../utils/sendSMS.js';
 
 
 // @desc    Request OTP for registration/verification
 // @route   POST /api/auth/request-otp
 // @access  Public
 const requestOTP = async (req, res) => {
-  let { email } = req.body;
+  let { mobileNumber } = req.body;
 
-  if (!email) {
-    return res.status(400).json({ message: 'Please provide an email address for verification' });
+  if (!mobileNumber) {
+    return res.status(400).json({ message: 'Please provide a mobile number for verification' });
   }
 
-  email = email.trim().toLowerCase();
+  mobileNumber = mobileNumber.trim();
 
   try {
     // Generate 6-digit OTP
     const generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    console.log(`[OTP REQUEST] Starting OTP generation for ${email}`);
-    console.log('[OTP REQUEST] EMAIL_HOST:', process.env.EMAIL_HOST || 'NOT SET');
-    console.log('[OTP REQUEST] EMAIL_USER:', process.env.EMAIL_USER || 'NOT SET');
-    console.log('[OTP REQUEST] EMAIL_PASS:', process.env.EMAIL_PASS ? 'SET ✓' : 'NOT SET ✗');
+    console.log(`[OTP REQUEST] Starting OTP generation for ${mobileNumber}`);
 
     // 1. Store OTP FIRST in the database
     await OTP.findOneAndUpdate(
-      { email },
+      { mobileNumber },
       { otp: generatedOtp, createdAt: new Date() },
       { upsert: true, new: true }
     );
 
-    console.log(`[DATABASE] ✅ OTP for ${email} saved: ${generatedOtp}`);
+    console.log(`[DATABASE] ✅ OTP for ${mobileNumber} saved: ${generatedOtp}`);
 
-    // 2. Prepare Email Content
+    // 2. Prepare SMS Content
     const message = `Your English Quest verification code is: ${generatedOtp}. It expires in 10 minutes.`;
-    const html = `
-      <div style="font-family: sans-serif; padding: 20px; color: #333;">
-        <h2 style="color: #863bff;">English Quest Verification</h2>
-        <p>Hello,</p>
-        <p>Use the following 6-digit OTP to verify your identity and continue your quest:</p>
-        <div style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #863bff; margin: 20px 0;">${generatedOtp}</div>
-        <p>This code will expire in 10 minutes.</p>
-        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-        <p style="font-size: 12px; color: #999;">If you didn't request this, please ignore this email.</p>
-      </div>
-    `;
 
-    // 3. SEND EMAIL & Await result
-    console.log(`[EMAIL] 📧 Attempting to send to ${email} via ${process.env.EMAIL_HOST}:${process.env.EMAIL_PORT}`);
+    // 3. SEND SMS & Await result
+    console.log(`[SMS] 📱 Attempting to send to ${mobileNumber}`);
     
-    const emailResult = await sendEmail({
-      email: email,
-      subject: 'Your English Quest Verification Code',
-      message,
-      html
+    const smsResult = await sendSMS({
+      mobileNumber,
+      message
     });
 
-    console.log('[EMAIL] Full result:', JSON.stringify(emailResult));
-
-    if (!emailResult.success) {
-      console.error(`[EMAIL] ❌ FAILED for ${email}:`, emailResult.error);
-      res.json({ 
-        success: true,
-        message: 'OTP generated but email failed: ' + emailResult.error
+    if (!smsResult.success) {
+      console.error(`[SMS] ❌ FAILED for ${mobileNumber}:`, smsResult.error);
+      res.status(500).json({ 
+        success: false,
+        message: 'Failed to send SMS OTP: ' + smsResult.error
       });
       return;
     }
 
-    console.log(`[EMAIL] ✅ Successfully sent to ${email}`, emailResult.messageId);
+    console.log(`[SMS] ✅ Successfully sent to ${mobileNumber}`, smsResult.messageId);
 
     // 4. Respond successfully
     res.json({ 
       success: true,
-      message: 'OTP sent successfully to your email'
+      message: 'OTP sent successfully to your mobile number'
     });
 
   } catch (error) {
     console.error('❌ requestOTP Error:', error);
-    console.error('Error stack:', error.stack);
     res.status(500).json({ message: 'Server error generating OTP' });
   }
 };
@@ -90,7 +72,7 @@ const requestOTP = async (req, res) => {
 // @route   POST /api/auth/verify-otp
 // @access  Public
 const verifyOTP = async (req, res) => {
-  const { email, otp } = req.body;
+  const { mobileNumber, otp } = req.body;
 
   // FAST BYPASS: Always allow 123456 for quick registration
   if (otp === '123456') {
@@ -98,7 +80,7 @@ const verifyOTP = async (req, res) => {
   }
 
   try {
-    const otpRecord = await OTP.findOne({ email, otp });
+    const otpRecord = await OTP.findOne({ mobileNumber, otp });
 
     if (!otpRecord) {
       return res.status(400).json({ message: 'Invalid or expired OTP' });

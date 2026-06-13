@@ -6,7 +6,7 @@ const lookup = promisify(dns.lookup);
 
 const sendEmail = async (options) => {
   try {
-    const port = parseInt(process.env.EMAIL_PORT || '587');
+    const port = parseInt(process.env.EMAIL_PORT || '465');
     const user = process.env.EMAIL_USER;
     const pass = process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s/g, '') : '';
     const host = process.env.EMAIL_HOST;
@@ -43,19 +43,21 @@ const sendEmail = async (options) => {
     });
     console.log('[sendEmail] To:', options.email);
 
+    const isSecure = port === 465;
+
     const transporter = nodemailer.createTransport({
-      host: hostIP, 
+      host: hostIP,
       port: port,
-      secure: port === 465, 
+      secure: isSecure,
       auth: {
         user: user,
         pass: pass,
       },
-      connectionTimeout: 10000, 
-      greetingTimeout: 10000,   
-      socketTimeout: 10000,     
+      connectionTimeout: 20000, // Increased to 20 seconds
+      greetingTimeout: 20000,
+      socketTimeout: 20000,
       tls: {
-        servername: host, // Critical: Use original hostname for certificate validation
+        servername: host,
         rejectUnauthorized: false
       }
     });

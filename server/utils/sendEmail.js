@@ -1,13 +1,17 @@
 import nodemailer from 'nodemailer';
 import dns from 'dns';
+import { promisify } from 'util';
+
+const lookup = promisify(dns.lookup);
 
 const sendEmail = async (options) => {
   try {
     const port = parseInt(process.env.EMAIL_PORT || '587');
     const user = process.env.EMAIL_USER;
     const pass = process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s/g, '') : '';
+    const host = process.env.EMAIL_HOST;
 
-    if (!process.env.EMAIL_HOST) {
+    if (!host) {
       console.log('--------------------------------------------------');
       console.log('[sendEmail] ⚠️ MISSING EMAIL_HOST CONFIGURATION');
       console.log(`[sendEmail] 📧 Simulated Email to: ${options.email}`);
@@ -16,12 +20,23 @@ const sendEmail = async (options) => {
       return { success: true, messageId: `simulated-email-${Date.now()}` };
     }
 
+    // Aggressively force IPv4 by resolving it manually
+    let hostIP = host;
+    try {
+      const { address } = await lookup(host, { family: 4 });
+      hostIP = address;
+      console.log(`[sendEmail] 🔍 Resolved ${host} to IPv4: ${hostIP}`);
+    } catch (dnsErr) {
+      console.warn(`[sendEmail] ⚠️ DNS Lookup failed for ${host}, falling back to original hostname`, dnsErr.message);
+    }
+
     const fromName = process.env.FROM_NAME || 'English Quest';
     const fromEmail = process.env.FROM_EMAIL || user;
 
     console.log('[sendEmail] 📧 Sending Email via Nodemailer');
     console.log('[sendEmail] Config:', {
-      host: process.env.EMAIL_HOST,
+      host: host,
+      resolvedIP: hostIP,
       port: port,
       user: user,
       from: `"${fromName}" <${fromEmail}>`
@@ -29,21 +44,18 @@ const sendEmail = async (options) => {
     console.log('[sendEmail] To:', options.email);
 
     const transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
+      host: hostIP, 
       port: port,
       secure: port === 465, 
       auth: {
         user: user,
         pass: pass,
       },
-      // Force IPv4 at the DNS level
-      lookup: (hostname, options, callback) => {
-        dns.lookup(hostname, { family: 4 }, callback);
-      },
       connectionTimeout: 10000, 
       greetingTimeout: 10000,   
       socketTimeout: 10000,     
       tls: {
+        servername: host, // Critical: Use original hostname for certificate validation
         rejectUnauthorized: false
       }
     });

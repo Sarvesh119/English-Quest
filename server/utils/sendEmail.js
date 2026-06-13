@@ -27,6 +27,9 @@ const sendEmail = async (options) => {
         user: user,
         pass: pass,
       },
+      connectionTimeout: 10000, // 10 seconds
+      greetingTimeout: 10000,   // 10 seconds
+      socketTimeout: 10000,     // 10 seconds
       tls: {
         // Do not fail on invalid certs
         rejectUnauthorized: false

@@ -50,7 +50,10 @@ const requestOTP = async (req, res) => {
     });
 
     if (!emailResult.success) {
-      return res.status(500).json({ success: false, message: 'Failed to send verification email' });
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Failed to send verification email: ' + emailResult.error 
+      });
     }
 
     res.json({ success: true, message: 'OTP sent successfully to your email' });

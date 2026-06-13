@@ -15,29 +15,36 @@ const sendEmail = async (options) => {
       return { success: true, messageId: `simulated-email-${Date.now()}` };
     }
 
+    const fromName = process.env.FROM_NAME || 'English Quest';
+    const fromEmail = process.env.FROM_EMAIL || user;
+
     console.log('[sendEmail] 📧 Sending Email via Nodemailer');
-    console.log('[sendEmail] Host:', process.env.EMAIL_HOST);
+    console.log('[sendEmail] Config:', {
+      host: process.env.EMAIL_HOST,
+      port: port,
+      user: user,
+      from: `"${fromName}" <${fromEmail}>`
+    });
     console.log('[sendEmail] To:', options.email);
 
     const transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST,
       port: port,
-      secure: port === 465, // true for 465, false for other ports
+      secure: port === 465, 
       auth: {
         user: user,
         pass: pass,
       },
-      connectionTimeout: 10000, // 10 seconds
-      greetingTimeout: 10000,   // 10 seconds
-      socketTimeout: 10000,     // 10 seconds
+      connectionTimeout: 10000, 
+      greetingTimeout: 10000,   
+      socketTimeout: 10000,     
       tls: {
-        // Do not fail on invalid certs
         rejectUnauthorized: false
       }
     });
 
     const mailOptions = {
-      from: `"${process.env.FROM_NAME}" <${process.env.FROM_EMAIL || user}>`,
+      from: `"${fromName}" <${fromEmail}>`,
       to: options.email,
       subject: options.subject,
       text: options.message,

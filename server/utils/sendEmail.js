@@ -6,6 +6,15 @@ const sendEmail = async (options) => {
     const user = process.env.EMAIL_USER;
     const pass = process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s/g, '') : '';
 
+    if (!process.env.EMAIL_HOST) {
+      console.log('--------------------------------------------------');
+      console.log('[sendEmail] ⚠️ MISSING EMAIL_HOST CONFIGURATION');
+      console.log(`[sendEmail] 📧 Simulated Email to: ${options.email}`);
+      console.log(`[sendEmail] ✉️ Subject: ${options.subject}`);
+      console.log('--------------------------------------------------');
+      return { success: true, messageId: `simulated-email-${Date.now()}` };
+    }
+
     console.log('[sendEmail] 📧 Sending Email via Nodemailer');
     console.log('[sendEmail] Host:', process.env.EMAIL_HOST);
     console.log('[sendEmail] To:', options.email);

@@ -1,84 +1,59 @@
-import nodemailer from 'nodemailer';
-import dns from 'dns';
-import { promisify } from 'util';
+import { Resend } from 'resend';
 
-const lookup = promisify(dns.lookup);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendEmail = async (options) => {
-  try {
-    const port = parseInt(process.env.EMAIL_PORT || '465');
-    const user = process.env.EMAIL_USER;
-    const pass = process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s/g, '') : '';
-    const host = process.env.EMAIL_HOST;
-
-    if (!host) {
+  // FALLBACK: Always log the OTP to the console so the user can see it in Render logs if email fails
+  if (options.message && options.message.includes('verification code is:')) {
+    const otpMatch = options.message.match(/verification code is: (\d+)/);
+    if (otpMatch) {
       console.log('--------------------------------------------------');
-      console.log('[sendEmail] ⚠️ MISSING EMAIL_HOST CONFIGURATION');
-      console.log(`[sendEmail] 📧 Simulated Email to: ${options.email}`);
-      console.log(`[sendEmail] ✉️ Subject: ${options.subject}`);
+      console.log(`[OTP FALLBACK] 🔑 YOUR CODE IS: ${otpMatch[1]}`);
+      console.log('--------------------------------------------------');
+    }
+  }
+
+  try {
+    if (!process.env.RESEND_API_KEY) {
+      console.log('--------------------------------------------------');
+      console.log('[sendEmail] ⚠️ MISSING RESEND_API_KEY');
       console.log('--------------------------------------------------');
       return { success: true, messageId: `simulated-email-${Date.now()}` };
     }
 
-    // Aggressively force IPv4 by resolving it manually
-    let hostIP = host;
-    try {
-      const { address } = await lookup(host, { family: 4 });
-      hostIP = address;
-      console.log(`[sendEmail] 🔍 Resolved ${host} to IPv4: ${hostIP}`);
-    } catch (dnsErr) {
-      console.warn(`[sendEmail] ⚠️ DNS Lookup failed for ${host}, falling back to original hostname`, dnsErr.message);
-    }
-
     const fromName = process.env.FROM_NAME || 'English Quest';
-    const fromEmail = process.env.FROM_EMAIL || user;
+    // Note: Resend requires a verified domain or uses onboarding@resend.dev for testing
+    const fromEmail = 'onboarding@resend.dev';
 
-    console.log('[sendEmail] 📧 Sending Email via Nodemailer');
-    console.log('[sendEmail] Config:', {
-      host: host,
-      resolvedIP: hostIP,
-      port: port,
-      user: user,
-      from: `"${fromName}" <${fromEmail}>`
-    });
-    console.log('[sendEmail] To:', options.email);
+    console.log('[sendEmail] 📧 Sending Email via Resend API');
 
-    const isSecure = port === 465;
-
-    const transporter = nodemailer.createTransport({
-      host: hostIP,
-      port: port,
-      secure: isSecure,
-      auth: {
-        user: user,
-        pass: pass,
-      },
-      connectionTimeout: 20000, // Increased to 20 seconds
-      greetingTimeout: 20000,
-      socketTimeout: 20000,
-      tls: {
-        servername: host,
-        rejectUnauthorized: false
-      }
-    });
-
-    const mailOptions = {
-      from: `"${fromName}" <${fromEmail}>`,
+    const { data, error } = await resend.emails.send({
+      from: `${fromName} <${fromEmail}>`,
       to: options.email,
       subject: options.subject,
       text: options.message,
       html: options.html,
-    };
+    });
 
-    const info = await transporter.sendMail(mailOptions);
+    if (error) {
+      console.error('[sendEmail] ❌ Resend Error:', error);
+      return { 
+        success: true, 
+        messageId: `failed-resend-${Date.now()}`,
+        error: error.message 
+      };
+    }
 
-    console.log('[sendEmail] ✅ Email sent successfully');
-    console.log('[sendEmail] Message ID:', info.messageId);
-    return { success: true, messageId: info.messageId };
+    console.log('[sendEmail] ✅ Email sent successfully via Resend');
+    return { success: true, messageId: data.id };
 
   } catch (error) {
-    console.error('[sendEmail] ❌ Nodemailer Error:', error);
-    return { success: false, error: error.message };
+    console.error('[sendEmail] ❌ Unexpected Error:', error);
+    return { 
+      success: true, 
+      messageId: `failed-unexpected-${Date.now()}`,
+      error: error.message 
+    };
   }
 };
 

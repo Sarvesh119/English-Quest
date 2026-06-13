@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import dns from 'dns';
 
 const sendEmail = async (options) => {
   try {
@@ -35,7 +36,10 @@ const sendEmail = async (options) => {
         user: user,
         pass: pass,
       },
-      family: 4, // Force IPv4 to avoid ENETUNREACH errors on IPv6
+      // Force IPv4 at the DNS level
+      lookup: (hostname, options, callback) => {
+        dns.lookup(hostname, { family: 4 }, callback);
+      },
       connectionTimeout: 10000, 
       greetingTimeout: 10000,   
       socketTimeout: 10000,     

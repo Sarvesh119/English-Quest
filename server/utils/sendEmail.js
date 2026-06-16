@@ -49,11 +49,13 @@ const sendEmail = async (options) => {
           // Your specific template placeholders
           passcode: otpValue,
           time: expiryTime,
+          // Branding
+          company_name: 'English Quest',
+          logo_url: 'https://cdn-icons-png.flaticon.com/512/3406/3406828.png', // Learning/Quest Icon
           // Common variations just in case
           otp_code: otpValue,
           otp: otpValue,
           code: otpValue,
-          company_name: 'English Quest',
         },
       }),
     });

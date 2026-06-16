@@ -40,10 +40,16 @@ const sendEmail = async (options) => {
           email: options.email,
           to_email: options.email,
           user_email: options.email,
-          to_name: options.email.split('@')[0], // Fallback name
+          to_name: options.email.split('@')[0],
           subject: options.subject,
           message: options.message,
+          // Common OTP variations
           otp_code: options.message.match(/verification code is: (\d+)/)?.[1] || '',
+          otp: options.message.match(/verification code is: (\d+)/)?.[1] || '',
+          code: options.message.match(/verification code is: (\d+)/)?.[1] || '',
+          // Common branding variations
+          company_name: 'English Quest',
+          project_name: 'English Quest',
         },
       }),
     });

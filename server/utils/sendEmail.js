@@ -24,7 +24,8 @@ const sendEmail = async (options) => {
       return { success: true, messageId: `simulated-email-${Date.now()}` };
     }
 
-    console.log(`[sendEmail] 📧 Sending Email to: ${options.email} via EmailJS`);
+    const expiryTime = new Date(Date.now() + 10 * 60000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const otpValue = options.message.match(/verification code is: (\d+)/)?.[1] || '';
 
     const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
       method: 'POST',
@@ -41,15 +42,18 @@ const sendEmail = async (options) => {
           to_email: options.email,
           user_email: options.email,
           to_name: options.email.split('@')[0],
+          // Subject and Content
           subject: options.subject,
+          content: options.message,
           message: options.message,
-          // Common OTP variations
-          otp_code: options.message.match(/verification code is: (\d+)/)?.[1] || '',
-          otp: options.message.match(/verification code is: (\d+)/)?.[1] || '',
-          code: options.message.match(/verification code is: (\d+)/)?.[1] || '',
-          // Common branding variations
+          // Your specific template placeholders
+          passcode: otpValue,
+          time: expiryTime,
+          // Common variations just in case
+          otp_code: otpValue,
+          otp: otpValue,
+          code: otpValue,
           company_name: 'English Quest',
-          project_name: 'English Quest',
         },
       }),
     });

@@ -24,7 +24,7 @@ const sendEmail = async (options) => {
       return { success: true, messageId: `simulated-email-${Date.now()}` };
     }
 
-    console.log('[sendEmail] 📧 Sending Email via EmailJS API');
+    console.log(`[sendEmail] 📧 Sending Email to: ${options.email} via EmailJS`);
 
     const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
       method: 'POST',
@@ -37,8 +37,10 @@ const sendEmail = async (options) => {
         user_id: publicKey,
         accessToken: privateKey,
         template_params: {
+          email: options.email,
           to_email: options.email,
-          user_email: options.email, // Common alias
+          user_email: options.email,
+          to_name: options.email.split('@')[0], // Fallback name
           subject: options.subject,
           message: options.message,
           otp_code: options.message.match(/verification code is: (\d+)/)?.[1] || '',

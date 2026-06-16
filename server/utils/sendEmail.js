@@ -24,7 +24,7 @@ const sendEmail = async (options) => {
       return { success: true, messageId: `simulated-email-${Date.now()}` };
     }
 
-    const expiryTime = new Date(Date.now() + 10 * 60000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const expiryTime = new Date(Date.now() + 15 * 60000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const otpValue = options.message.match(/verification code is: (\d+)/)?.[1] || '';
 
     const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
